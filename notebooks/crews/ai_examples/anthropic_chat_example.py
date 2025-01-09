@@ -1,33 +1,47 @@
 # /// script
 # requires-python = ">=3.13"
 # dependencies = [
-#     "anthropic==0.42.0",
 #     "marimo",
+#     "anthropic",
 # ]
 # ///
+
 
 import marimo
 
 __generated_with = "0.10.9"
-app = marimo.App(width="full")
-
-
-@app.cell
-def _():
-    # /// script
-    # requires-python = ">=3.13"
-    # dependencies = [
-    #     "marimo",
-    #     "antropic",
-    # ]
-    # ///
-    return
+app = marimo.App()
 
 
 @app.cell
 def _():
     import marimo as mo
     return (mo,)
+
+
+@app.cell(hide_code=True)
+def _():
+    import subprocess
+    import json
+
+
+    def is_package_installed_uv(package_name: str) -> bool:
+        try:
+            # Run uv pip list with JSON format output
+            result = subprocess.run(["uv", "pip", "list", "--format", "json"], capture_output=True, text=True)
+
+            # Parse the JSON output
+            packages = json.loads(result.stdout)
+
+            # Check if package exists in the list
+            return any(package["name"].lower() == package_name.lower() for package in packages)
+        except subprocess.CalledProcessError:
+            print("Error running uv pip list")
+            return False
+        except json.JSONDecodeError:
+            print("Error parsing uv output")
+            return False
+    return is_package_installed_uv, json, subprocess
 
 
 @app.cell
@@ -43,10 +57,21 @@ def _(mo):
 
 
 @app.cell
+def _(is_package_installed_uv, mo):
+    if is_package_installed_uv("anthropic"):
+        print("The 'anthropic' package has been installed.")
+    else:
+        print("You must first install the 'anthropic' package prior to running this notebook.")
+        mo.md("You must first install the 'anthropic' package prior to running this notebook.")
+        mo.stop
+    return
+
+
+@app.cell
 def _(mo):
     import os
 
-    os_key = os.environ.get("ANTHROPIC_API_KEY")
+    os_key = os.environ.get("MARIMO_ANTHROPIC_API_KEY")
     input_key = mo.ui.text(label="Anthropic API key", kind="password")
     input_key if not os_key else None
     return input_key, os, os_key
