@@ -1,0 +1,23 @@
+services:
+  marimo:
+    build:
+      context: .
+    environment:
+      - MARIMO_SKIP_UPDATE_CHECK=1
+      - PORT=8080
+      - HOST=0.0.0.0
+      - MARIMO_ANTHROPIC_API_KEY=${MARIMO_ANTHROPIC_API_KEY}
+      - MARIMO_OPENAI_API_KEY=${MARIMO_OPENAI_API_KEY}
+    ports:
+      - "8080:8080"  # Host:Container
+    volumes:
+      - ./notebooks:/app/notebooks  # For persistent notebook storage
+      - ./data:/app/data  # For persistent data storage
+      - ./marimo.toml:/app/.marimo.toml
+    user: appuser  # Use the non-root user we created
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080"]
+      interval: 30s
+      timeout: 10s
+      retries: 3

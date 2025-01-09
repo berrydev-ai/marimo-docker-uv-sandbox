@@ -1,0 +1,49 @@
+[completion]
+activate_on_typing = true
+copilot = "github"
+
+[display]
+dataframes = "rich"
+theme = "dark"
+cell_output = "above"
+default_width = "medium"
+code_editor_font_size = 16
+
+[formatting]
+line_length = 120
+
+[keymap]
+preset = "vim"
+
+[runtime]
+on_cell_change = "lazy"
+auto_reload = "off"
+auto_instantiate = true
+
+[save]
+autosave = "after_delay"
+autosave_delay = 1000
+format_on_save = true
+
+[server]
+follow_symlink = false
+browser = "default"
+
+[package_management]
+manager = "uv"
+
+[ai]
+rules = "" # System prompt
+
+[ai.anthropic]
+api_key = "${MARIMO_ANTHROPIC_API_KEY}"
+
+[ai.open_ai]
+api_key = "${MARIMO_OPENAI_API_KEY}"
+base_url = "https://api.openai.com/v1"
+model = "claude-"
+
+# [ai.google]
+# api_key = ""
+
+[experimental]
